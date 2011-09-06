@@ -34,6 +34,13 @@ class SluggableBehavior extends CActiveRecordBehavior
     public $update = true;
 
     /**
+     * Name of table column to store the slug in
+     *
+     * @var string $slugColumn
+     */
+    public $slugColumn = 'slug';
+
+    /**
      * Default columns to build slug if none given
      *
      * @var array Columns
@@ -43,7 +50,7 @@ class SluggableBehavior extends CActiveRecordBehavior
     public function beforeSave($event)
     {
         // Slug already created and no updated needed
-        if (true !== $this->update && ! empty($this->owner->slug)) {
+        if (true !== $this->update && ! empty($this->owner->{$this->slugColumn})) {
             Yii::trace(
                 'Slug found - no update needed.',
                 __CLASS__ . '::' . __FUNCTION__
@@ -119,18 +126,18 @@ class SluggableBehavior extends CActiveRecordBehavior
 
         // Check if slug has to be unique
         if (false === $this->unique
-            || (! $this->owner->isNewRecord && $this->owner->slug === $slug)
+            || (! $this->owner->isNewRecord && $this->owner->{$this->slugColumn} === $slug)
         )
         {
-            $this->owner->slug = $slug;
+            $this->owner->{$this->slugColumn} = $slug;
         } else {
             $counter = 0;
             while ($this->owner->findByAttributes(
-                array('slug' => $checkslug))
+                array($this->slugColumn => $checkslug))
             ) {
                 $checkslug = sprintf('%s-%d', $slug, ++$counter);
             }
-            $this->owner->slug = $counter > 0 ? $checkslug : $slug;
+            $this->owner->{$this->slugColumn} = $counter > 0 ? $checkslug : $slug;
         }
         return parent::beforeSave($event);
     }
