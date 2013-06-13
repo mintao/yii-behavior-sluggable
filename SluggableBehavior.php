@@ -67,14 +67,14 @@ class SluggableBehavior extends CActiveRecordBehavior
      */
     public $toLower = false;
 
-	/**
-	 * Limits the maximum length of the slug
-	 * Defaults to 0 or no check
-	 *
-	 * @var int
-	 * @access public
-	 */
-	public $maxLength = 0;
+    /**
+     * Limits the maximum length of the slug
+     * Defaults to 0 or no check
+     *
+     * @var int
+     * @access public
+     */
+    public $maxLength = 0;
 
 	/**
      * Default columns to build slug if none given
@@ -194,14 +194,14 @@ class SluggableBehavior extends CActiveRecordBehavior
                 ->findByAttributes(array($this->slugColumn => $checkslug))
             ) {
                 Yii::trace("$checkslug found, iterating", __CLASS__);
-				$checkslug = sprintf('%s-%d', $slug, ++$counter);
+                $checkslug = sprintf('%s-%d', $slug, ++$counter);
 
-				//Limit the Length?
-				if ($this->maxLength !== 0 && strlen($checkslug) > $this->maxLength) {
-					$checkslug = sprintf('%s-%d', substr($slug,
-							($this->maxLength - 1 - strlen($counter)) ),
-							$counter);
-				}
+                //Limit the Length?
+		if ($this->maxLength !== 0 && strlen($checkslug) > $this->maxLength) {
+		    $checkslug = sprintf('%s-%d', substr($slug,
+		        ($this->maxLength - 1 - strlen($counter)) ),
+			$counter);
+                }
             }
             $this->getOwner()->{$this->slugColumn} = $counter > 0 ? $checkslug : $slug;
         }
