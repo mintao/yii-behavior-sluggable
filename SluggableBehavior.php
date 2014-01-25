@@ -172,6 +172,27 @@ class SluggableBehavior extends CActiveRecordBehavior
     }
 
     /**
+     * @var array Predefined slugs to avoid
+     */
+    private $predefined = array();
+
+    /**
+     * @param array $predefined
+     */
+    public function setPredefined($predefined)
+    {
+        $this->predefined = $predefined;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPredefined()
+    {
+        return $this->predefined;
+    }
+    
+    /**
      * beforeSave
      *
      * @param CModelEvent $event
@@ -268,7 +289,8 @@ class SluggableBehavior extends CActiveRecordBehavior
         } else {
             $counter = 0;
             while ($this->getOwner()->resetScope()
-                ->findByAttributes(array($this->slugColumn => $checkslug))
+                ->findByAttributes(array($this->slugColumn => $checkslug)) ||
+                    in_array($checkslug, $this->predefined)
             ) {
                 Yii::trace("$checkslug found, iterating", __CLASS__);
                 $checkslug = sprintf('%s-%d', $slug, ++$counter);
